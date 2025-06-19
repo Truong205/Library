@@ -28,7 +28,7 @@ public class Users {
     String email;
     @Column(name = "phone_number", columnDefinition = "NVARCHAR(20)")
     String phoneNumber;
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "role",columnDefinition = "NVARCHAR(50)")
     String role;
     @Column(name = "created_at", columnDefinition = "DATETIME")
