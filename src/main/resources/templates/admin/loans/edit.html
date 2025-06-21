@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/loans">Quản lý phiếu mượn</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa phiếu mượn</li>
+            </ol>
+            <!-- Main body information -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i>
+                    Chỉnh sửa phiếu mượn
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/edit-loan}" th:object="${loan}" method="post">
+                        <input type="hidden" th:field="*{loanId}">
+                        <input type="hidden" th:field="*{bookId}">
+                        <input type="hidden" th:field="*{userId}">
+                        <input type="hidden" th:field="*{createdAt}">
+                        <input type="hidden" th:field="*{limitation}">
+                        <input type="hidden" th:field="*{isReturned}">
+                        <input type="hidden" th:field="*{returnedDate}">
+                        <input type="hidden" th:field="*{fine}">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Mã phiếu mượn</label>
+                                    <p class="form-control-static" th:text="${loan.loanId}"></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Sách</label>
+                                    <p class="form-control-static" th:text="${loan.book?.name + ' - ' + loan.book?.author}"></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="name">Tên người mượn <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}" required
+                                           placeholder="Nhập tên người mượn">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required
+                                           placeholder="example@email.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phoneNumber">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required
+                                           placeholder="0123456789" pattern="[0-9]{10,11}">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Thủ thư tạo phiếu</label>
+                                    <p class="form-control-static" th:text="${loan.user?.fullName + ' (' + loan.user?.username + ')'}"></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Ngày mượn</label>
+                                    <p class="form-control-static" th:text="${#temporals.format(loan.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Hạn trả</label>
+                                    <p class="form-control-static" th:text="${#temporals.format(loan.limitation, 'dd/MM/yyyy')}"
+                                       th:class="${loan.limitation.isBefore(#temporals.createNow()) && !loan.isReturned ? 'text-danger font-weight-bold' : ''}"></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Tiền phạt</label>
+                                    <p class="form-control-static">
+                                        <span th:if="${loan.fine > 0}" th:text="${#numbers.formatInteger(loan.fine, 0, 'POINT')} + ' VNĐ'" class="text-danger font-weight-bold"></span>
+                                        <span th:if="${loan.fine == 0 || loan.fine == null}">Không có</span>
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Trạng thái</label>
+                                    <p class="form-control-static">
+                                        <span th:if="${loan.isReturned}" class="badge badge-success">Đã trả</span>
+                                        <span th:if="${!loan.isReturned && loan.limitation.isAfter(#temporals.createNow())}" class="badge badge-primary">Đang mượn</span>
+                                        <span th:if="${!loan.isReturned && loan.limitation.isBefore(#temporals.createNow())}" class="badge badge-danger">Quá hạn</span>
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group" th:if="${loan.isReturned && loan.returnedDate != null}">
+                                    <label>Ngày trả</label>
+                                    <p class="form-control-static" th:text="${#temporals.format(loan.returnedDate, 'dd/MM/yyyy HH:mm')}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-danger" th:if="${error != null}">
+                            <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu thay đổi
+                            </button>
+                            <a th:if="${!loan.isReturned}" th:href="@{/admin/return-loan/{id}(id=${loan.loanId})}" class="btn btn-success"
+                               onclick="return confirm('Xác nhận trả sách?');">
+                                <i class="fas fa-check"></i> Trả sách
+                            </a>
+                            <a th:if="${!loan.isReturned}" th:href="@{/admin/extend-loan/{id}(id=${loan.loanId})}" class="btn btn-warning"
+                               onclick="return confirm('Gia hạn thêm 7 ngày?');">
+                                <i class="fas fa-calendar-plus"></i> Gia hạn
+                            </a>
+                            <a href="/admin/loans" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+</body>
+</html> 
