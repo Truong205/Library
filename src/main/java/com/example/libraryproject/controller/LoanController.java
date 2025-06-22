@@ -2,6 +2,7 @@ package com.example.libraryproject.controller;
 
 import java.util.List;
 
+import com.example.libraryproject.entity.Role;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +34,7 @@ public class LoanController {
     private static final String ERROR = "error";
     private static final String BOOKS = "books";
     private static final String USERS = "users";
-    private static final String LIBRARIAN = "LIBRARIAN";
-
+    private static final Role LIBRARIAN = Role.LIBRARIAN;
     private static final String LOAN_VIEW = "admin/loans/loan";
     private static final String LOAN_VIEW2 = "redirect:/admin/loans";
     private static final String LOAN_ADD = "admin/loans/add";
