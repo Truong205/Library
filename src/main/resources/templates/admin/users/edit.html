@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/users}">Quản lý người dùng</a>
+                </li>
+                <li class="breadcrumb-item active">Chỉnh sửa người dùng</li>
+            </ol>
+
+            <!-- Edit User Form -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-user-edit"></i>
+                    Chỉnh sửa thông tin người dùng: <strong th:text="${user.username}"></strong>
+                </div>
+                <div class="card-body">
+                                         <form th:action="@{/admin/edit-user}" th:object="${user}" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Username (Read-only) -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Tên đăng nhập</label>
+                                    <input type="text" class="form-control bg-light" th:field="*{username}" readonly>
+                                    <small class="form-text text-muted">
+                                        Tên đăng nhập không thể thay đổi
+                                    </small>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="form-group">
+                                    <label  class="font-weight-bold">Mật khẩu mới</label>
+                                    <input type="password" class="form-control" th:field="*{password}"
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                                           placeholder="Để trống nếu không muốn thay đổi">
+                                    <div th:if="${#fields.hasErrors('password')}" 
+                                         th:errors="*{password}" class="invalid-feedback"></div>
+                                    <small class="form-text text-muted">
+                                        Để trống nếu không muốn thay đổi mật khẩu. Nếu nhập mới, phải có ít nhất 6 ký tự.
+                                    </small>
+                                </div>
+
+                                <!-- Full Name -->
+                                <div class="form-group">
+                                    <label  class="font-weight-bold">Họ và tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" th:field="*{fullName}"
+                                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                                           placeholder="Nhập họ và tên đầy đủ" required>
+                                    <div th:if="${#fields.hasErrors('fullName')}" 
+                                         th:errors="*{fullName}" class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Số điện thoại</label>
+                                    <input type="text" class="form-control" th:field="*{phoneNumber}"
+                                           th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
+                                           placeholder="Nhập số điện thoại">
+                                    <div th:if="${#fields.hasErrors('phoneNumber')}" 
+                                         th:errors="*{phoneNumber}" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Email -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" th:field="*{email}"
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                           placeholder="Nhập địa chỉ email" required>
+                                    <div th:if="${#fields.hasErrors('email')}" 
+                                         th:errors="*{email}" class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Role -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Vai trò <span class="text-danger">*</span></label>
+                                    <select class="form-control" th:field="*{role}"
+                                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''" required>
+                                        <option value="">-- Chọn vai trò --</option>
+                                        <option th:each="roleOption : ${roles}"
+                                                th:value="${roleOption}"
+                                                th:text="${roleOption.displayName}"
+                                                th:selected="${roleOption == user.role}"></option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('role')}" 
+                                         th:errors="*{role}" class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Trạng thái</label>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" th:field="*{isActive}" id="isActive">
+                                        <label class="form-check-label" for="isActive">
+                                            Kích hoạt tài khoản
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Chỉ những tài khoản được kích hoạt mới có thể đăng nhập
+                                    </small>
+                                </div>
+
+                                <!-- Creation Date (Read-only) -->
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Ngày tạo</label>
+                                    <input type="text" class="form-control bg-light" 
+                                           th:value="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm:ss')}" readonly>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="form-group mt-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Cập nhật
+                                    </button>
+                                    <a th:href="@{/admin/users}" class="btn btn-secondary ml-2">
+                                        <i class="fas fa-times"></i> Hủy
+                                    </a>
+                                    <a th:href="@{/admin/view-user/{id}(id=${user.userId})}" class="btn btn-info ml-2">
+                                         <i class="fas fa-eye"></i> Xem chi tiết
+                                     </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<script>
+$(document).ready(function() {
+    // Clear password field on page load to prevent pre-filling
+    $('#password').val('');
+    
+    // Add form validation feedback
+    $('form').on('submit', function(e) {
+        const requiredFields = $(this).find('[required]');
+        let isValid = true;
+        
+        requiredFields.each(function() {
+            if (!$(this).val().trim()) {
+                $(this).addClass('is-invalid');
+                isValid = false;
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Vui lòng điền đầy đủ các trường bắt buộc!');
+        }
+    });
+    
+    // Remove invalid class on input
+    $('input, select').on('input change', function() {
+        if ($(this).val().trim()) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    
+    // Password field handling
+    $('#password').on('input', function() {
+        const password = $(this).val();
+        if (password.length > 0 && password.length < 6) {
+            $(this).addClass('is-invalid');
+            $(this).next('.invalid-feedback').text('Mật khẩu phải có ít nhất 6 ký tự');
+        } else {
+            $(this).removeClass('is-invalid');
+        }
+    });
+});
+</script>
+
+</body>
+</html> 
