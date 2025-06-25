@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+
+<body id="page-top">
+    <nav th:replace="admin/fragments/nav-bar :: nav-bar"></nav>
+    
+    <div id="wrapper">
+        <ul th:replace="admin/fragments/sidebar :: sidebar"></ul>
+        
+        <div id="content-wrapper">
+            <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/admin/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/admin/profile}">Thông tin tài khoản</a>
+                    </li>
+                    <li class="breadcrumb-item active">Chỉnh sửa</li>
+                </ol>
+
+                <!-- Form -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-edit me-2"></i>Chỉnh sửa thông tin tài khoản
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/admin/profile/update}" th:object="${user}" method="post">
+                                    <input type="hidden" th:field="*{userId}">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                                <input type="text" class="form-control" id="username" 
+                                                       th:value="${user.username}" readonly>
+                                                <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label for="role" class="form-label">Vai trò</label>
+                                                <input type="text" class="form-control" id="role" 
+                                                       th:value="${user.role.displayName}" readonly>
+                                                <small class="text-muted">Vai trò không thể thay đổi</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}" 
+                                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                                               placeholder="Nhập họ và tên">
+                                        <div th:if="${#fields.hasErrors('fullName')}" class="invalid-feedback">
+                                            <span th:errors="*{fullName}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                               placeholder="Nhập địa chỉ email">
+                                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                                            <span th:errors="*{email}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                                        <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" 
+                                               th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid' : ''"
+                                               placeholder="Nhập số điện thoại">
+                                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="invalid-feedback">
+                                            <span th:errors="*{phoneNumber}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="password" class="form-label">Mật khẩu mới</label>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}" 
+                                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                                               placeholder="Để trống nếu không muốn thay đổi">
+                                        <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback">
+                                            <span th:errors="*{password}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary me-2">
+                                            <i class="fas fa-save me-2"></i>Lưu thay đổi
+                                        </button>
+                                        <a th:href="@{/admin/profile}" class="btn btn-secondary">
+                                            <i class="fas fa-times me-2"></i>Hủy
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Lưu ý
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Bạn có thể thay đổi họ tên, email và số điện thoại
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-lock text-warning me-2"></i>
+                                        Tên đăng nhập và vai trò không thể thay đổi
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-key text-info me-2"></i>
+                                        Để trống mật khẩu nếu không muốn thay đổi
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-envelope text-primary me-2"></i>
+                                        Email phải là duy nhất trong hệ thống
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer th:replace="admin/fragments/footer :: footer"></footer>
+        </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <div th:replace="admin/fragments/logout :: logout"></div>
+
+</body>
+</html> 

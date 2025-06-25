@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Đăng nhập - Hệ thống quản lý thư viện</title>
+    
+    <!-- Custom fonts for this template-->
+    <link href="/assets2/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom styles for this template-->
+    <link href="/assets2/css/sb-admin.css" rel="stylesheet">
+    
+    <style>
+        .login-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px 15px 0 0;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-weight: bold;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-4 col-lg-5 col-md-6">
+                <div class="card login-card">
+                    <div class="card-header">
+                        <div class="text-center">
+                            <i class="fas fa-book fa-3x mb-3"></i>
+                            <h4>Hệ thống quản lý thư viện</h4>
+                            <p class="mb-0">Đăng nhập để tiếp tục</p>
+                        </div>
+                    </div>
+                    <div class="card-body p-5">
+                        <!-- Hiển thị thông báo lỗi -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        
+                        <!-- Hiển thị thông báo thành công -->
+                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span th:text="${successMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form th:action="@{/auth/authenticate}" method="post">
+                            <div class="form-group mb-3">
+                                <label class="small mb-1" for="username">Tên đăng nhập</label>
+                                <input class="form-control" id="username" name="username" type="text" 
+                                       placeholder="Nhập tên đăng nhập" required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="small mb-1" for="password">Mật khẩu</label>
+                                <input class="form-control" id="password" name="password" type="password" 
+                                       placeholder="Nhập mật khẩu" required>
+                            </div>
+                            <div class="form-group d-flex align-items-center justify-content-between mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" name="remember-me">
+                                    <label class="form-check-label" for="rememberPasswordCheck">Ghi nhớ đăng nhập</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-login btn-block w-100" type="submit">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                        <div class="small text-muted">© 2024 Hệ thống quản lý thư viện</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/assets2/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Core plugin JavaScript-->
+    <script src="/assets2/vendor/jquery-easing/jquery.easing.min.js"></script>
+</body>
+</html> 

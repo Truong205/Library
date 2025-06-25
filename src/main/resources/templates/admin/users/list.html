@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Quản lý người dùng</li>
+            </ol>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- DataTables Example -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-users"></i>
+                    Danh sách người dùng
+                    <div class="float-right">
+                        <a th:href="@{/admin/add-user}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-user-plus"></i> Thêm người dùng
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user, iterStat : ${users}">
+                                    <td th:text="${iterStat.count}"></td>
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${user.fullName}"></td>
+                                    <td th:text="${user.email}"></td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${user.role.name() == 'ADMIN'} ? 'badge-danger' : 'badge-info'"
+                                              th:text="${user.role.displayName}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${user.isActive} ? 'badge-success' : 'badge-secondary'"
+                                              th:text="${user.isActive} ? 'Hoạt động' : 'Vô hiệu hóa'"></span>
+                                    </td>
+                                    <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/admin/view-user/{id}(id=${user.userId})}" 
+                                               class="btn btn-info btn-sm" title="Xem chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a th:href="@{/admin/edit-user/{id}(id=${user.userId})}" 
+                                               class="btn btn-warning btn-sm" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <!-- Deactivate button -->
+                                            <a th:if="${user.isActive}"
+                                               th:href="@{/admin/deactivate-user/{id}(id=${user.userId})}"
+                                               class="btn btn-sm btn-secondary" 
+                                               title="Vô hiệu hóa"
+                                               onclick="return confirm('Bạn có chắc chắn muốn vô hiệu hóa người dùng này?')">
+                                                <i class="fas fa-ban"></i>
+                                            </a>
+                                            <!-- Reactivate button -->
+                                            <a th:unless="${user.isActive}"
+                                               th:href="@{/admin/reactivate-user/{id}(id=${user.userId})}"
+                                               class="btn btn-sm btn-success" 
+                                               title="Kích hoạt"
+                                               onclick="return confirm('Bạn có chắc chắn muốn kích hoạt người dùng này?')">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a th:href="@{/admin/delete-user/{id}(id=${user.userId})}"
+                                               class="btn btn-danger btn-sm" 
+                                               title="Xóa"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác!')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+</body>
+</html> 

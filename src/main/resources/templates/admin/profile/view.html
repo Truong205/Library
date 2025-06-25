@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+
+<body id="page-top">
+    <nav th:replace="admin/fragments/nav-bar :: nav-bar"></nav>
+    
+    <div id="wrapper">
+        <ul th:replace="admin/fragments/sidebar :: sidebar"></ul>
+        
+        <div id="content-wrapper">
+            <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/admin/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active">Thông tin tài khoản</li>
+                </ol>
+
+                <!-- Thông báo -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-user me-2"></i>Thông tin tài khoản
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Tên đăng nhập:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:text="${user.username}"></span>
+                                        <span class="badge badge-secondary ms-2" th:text="${user.role.displayName}"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Họ và tên:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:text="${user.fullName}"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Email:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:text="${user.email}"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Số điện thoại:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:text="${user.phoneNumber != null ? user.phoneNumber : 'Chưa cập nhật'}"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Ngày tạo:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <strong>Trạng thái:</strong>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <span th:if="${user.isActive}" class="badge badge-success">
+                                            <i class="fas fa-check me-1"></i>Hoạt động
+                                        </span>
+                                        <span th:unless="${user.isActive}" class="badge badge-danger">
+                                            <i class="fas fa-times me-1"></i>Vô hiệu hóa
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a th:href="@{/admin/profile/edit}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>Chỉnh sửa thông tin
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-shield-alt me-2"></i>Quyền hạn
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${user.role.name() == 'ADMIN'}">
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-crown me-2"></i>Quản trị viên
+                                    </h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Quản lý người dùng</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Quản lý sách</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Quản lý mượn trả</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Xem báo cáo</li>
+                                    </ul>
+                                </div>
+                                
+                                <div th:if="${user.role.name() == 'LIBRARIAN'}">
+                                    <h6 class="text-info">
+                                        <i class="fas fa-book me-2"></i>Thủ thư
+                                    </h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Quản lý sách</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Quản lý mượn trả</li>
+                                        <li><i class="fas fa-times text-muted me-2"></i>Quản lý người dùng</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer th:replace="admin/fragments/footer :: footer"></footer>
+        </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <div th:replace="admin/fragments/logout :: logout"></div>
+
+</body>
+</html> 
